@@ -7,6 +7,10 @@ name = "pypi"
 django = "*"
 python-ldap = "*"
 python-dotenv = "*"
+boto3 = "*"
+pillow = "*"
+dj-database-url = "*"
+psycopg2 = "*"
 pyjwt = "*"
 
 [dev-packages]

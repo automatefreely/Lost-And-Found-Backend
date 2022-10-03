@@ -1,14 +1,15 @@
 from datetime import datetime
 import os
 from dotenv import load_dotenv
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
+from django.http import JsonResponse
+from .ldap_auth import getUser
 import jwt
+import json
+from json.decoder import JSONDecodeError
 load_dotenv()
 
-from .models import User
 
-tokenHandler = jwt.JWT()
+tokenHandler = jwt
 JWT_SECRET = os.environ.get("JWT_SECRET")
 
 class BasicMiddleware:
@@ -24,19 +25,27 @@ class BasicMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        request.unauthorisedResponse = HttpResponse({"error":"User authentication required"}, status=401)
-
-        if (request.headers["secret"] and request.headers["secret"]!=""):
-            message = tokenHandler.decode(request.headers["secret"], JWT_SECRET, algorithms="HS256")
-            try:
-                user = User.objects.get(uid__exact=message["uid"])
-            except User.DoesNotExist:
-                user = None
-
-            request.user = user
-            if (user!=None and datetime.fromisoformat(message["exp"]) > datetime.now()) :
+        request.unauthorisedResponse = JsonResponse({"error":"User authentication required"}, status=401)
+        body_unicode = request.body.decode('utf-8')
+        try:
+            request.jsonbody = json.loads(body_unicode)
+        except JSONDecodeError:
+            request.jsonbody = None
+        
+        try:
+            secret = request.headers["secret"]
+        except KeyError:
+            secret = None
+        if (secret and secret!=""):
+            message = tokenHandler.decode(secret, JWT_SECRET, algorithms="HS256")
+            if (datetime.fromisoformat(message["exp"]) > datetime.now()) :
+                request.user = {
+                    "uid": message["uid"],
+                    "name": message["name"]
+                }
                 request.authenticated = True
             else:
+                request.user = None
                 request.authenticated = False
         else:
             request.user = None

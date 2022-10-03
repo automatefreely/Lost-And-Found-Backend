@@ -47,7 +47,32 @@ def auth(username: str, password: str) -> dict:
 
     return details
 
+
+def getUser(username: str) -> dict:
+    """
+    Returns User details using username
+    """
+    searchFilter = "uid="+username
+    try:
+        ldap_result_id = ldap_conn.search(conn_string, searchScope, searchFilter)
+        result_type, result_data = ldap_conn.result(ldap_result_id, 0)
+        if result_type != ldap.RES_SEARCH_ENTRY:
+            raise InvalidUser
+    except ldap.LDAPError as e:
+        raise ServerError(error=e)
+
+    details={
+        "uid": result_data[0][1]['uid'][0].decode('utf-8'),
+        "name": result_data[0][1]['gecos'][0].decode('utf-8'),
+        "mail": result_data[0][1]['mail'][0].decode('utf-8'),
+    }
+
+    return details
+
+
 """
+Details returned by ldap server without logging in user:
+
 [   
     (   'uid=IIT2021146,ou=2021,ou=IT,ou=Btech,ou=Student,dc=iiita,dc=ac,dc=in',
         {   'accountStatus': [b'Active'],
