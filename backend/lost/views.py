@@ -1,4 +1,3 @@
-import json
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django import forms
@@ -13,7 +12,7 @@ class NewItemForm(forms.Form):
     lostDate = forms.DateTimeField(required=False)
     contactEmail = forms.EmailField(required=False)
     contactPhone = forms.CharField(max_length=10)
-    image = forms.URLField(max_length=300)
+    image = forms.URLField(max_length=300, required=False)
 
 
 selectedCols = [
@@ -42,7 +41,7 @@ def latestLost(req):
     if not page_number:
         page_number = 1
     lostitems = Lost.objects.filter(found=False).order_by("-created").values(*selectedCols)
-    paginated = Paginator(lostitems, page_size)
+    paginated = Paginator(list(lostitems), page_size)
     curr_page = paginated.get_page(page_number)
     
     res = {
@@ -82,13 +81,13 @@ def newItem(req):
 
     if req.method != "POST":
         return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
-    form = NewItemForm(req.jsonbody)
+    form = NewItemForm(req.jsonbody(req))
     if form.is_valid():
-        newLost = Lost.create(
+        newLost = Lost.objects.create(
             user_id = req.user["uid"],
             user_name = req.user["name"],
             title = form.cleaned_data["title"],
-            descripion = form.cleaned_data["description"],
+            description = form.cleaned_data["description"],
             location = form.cleaned_data["location"],
             lostDate = form.cleaned_data["lostDate"],
             contactEmail = form.cleaned_data["contactEmail"],
@@ -109,7 +108,7 @@ def markFound(req):
     if req.method != "POST":
         return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
 
-    lostitem = Lost.objects.filter(id = req.jsonbody.get("id"), user_id = req.user["uid"]).first()
+    lostitem = Lost.objects.filter(id = req.jsonbody(req).get("id"), user_id = req.user["uid"]).first()
     if not lostitem:
         return JsonResponse({"status": False, "error": "Item not found"}, status=404)
 

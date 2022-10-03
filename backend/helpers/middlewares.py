@@ -26,19 +26,20 @@ class BasicMiddleware:
 
     def __call__(self, request):
         request.unauthorisedResponse = JsonResponse({"error":"User authentication required"}, status=401)
-        body_unicode = request.body.decode('utf-8')
-        try:
-            request.jsonbody = json.loads(body_unicode)
-        except JSONDecodeError:
-            request.jsonbody = None
-        
+        def bodytojson(request):
+            body_unicode = request.body.decode('utf-8')
+            try:
+                return json.loads(body_unicode)
+            except JSONDecodeError:
+                return None
+        request.jsonbody = bodytojson
         try:
             secret = request.headers["secret"]
         except KeyError:
             secret = None
         if (secret and secret!=""):
             message = tokenHandler.decode(secret, JWT_SECRET, algorithms="HS256")
-            if (datetime.fromisoformat(message["exp"]) > datetime.now()) :
+            if (datetime.fromisoformat(message["expireon"]) > datetime.now()) :
                 request.user = {
                     "uid": message["uid"],
                     "name": message["name"]

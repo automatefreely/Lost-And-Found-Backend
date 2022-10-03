@@ -4,5 +4,8 @@ from . import views
 urlpatterns=[
     path("auth/", views.authUser),
     path("self/", views.getSelfUser),
-    path("uploadimage/", views.imageUpload)
+    path("uploadimage/", views.imageUpload),
+    path("auth", views.authUser),
+    path("self", views.getSelfUser),
+    path("uploadimage", views.imageUpload)
 ]

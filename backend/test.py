@@ -1,7 +1,4 @@
-from datetime import datetime
+from secrets import token_urlsafe
 
-r = str(datetime.now())
-print(r)
-
-d = datetime.fromisoformat(r)
-print(d, type(d))
+for i in range(10):
+    print(token_urlsafe(16))

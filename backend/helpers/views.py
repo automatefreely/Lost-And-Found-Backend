@@ -41,7 +41,6 @@ s3client = boto3.client(
     aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
     aws_secret_access_key=os.environ.get("AWS_ACCESS_KEY_SECRET"),
 )
-s3transfer = S3Transfer(s3client)
 bucket = os.environ.get("S3_BUCKET_NAME")
 
 
@@ -49,25 +48,25 @@ def imageUpload(req):
     if not (req.authenticated):
         return req.unauthorisedResponse
     if(req.method=='POST'):
-        img_file = req.Files['image']
+        img_file = req.FILES['image']
         file_ext = pathlib.Path(img_file.name).suffix
         if img_file and (file_ext in ['.jpg', '.png', '.jpeg']) and img_file.size<10485760: #10MB
-            img = Image(img_file)
+            img = Image.open(img_file)
             img.thumbnail((1024, 1024)) # Max size of Image allowed -> 1024x1024 pixels
             
             file_to_upload = io.BytesIO()
             img.save(file_to_upload, format=img.format)
             file_to_upload.seek(0)
 
-            filename = req.user.uuid + '-' + token_urlsafe(10) + file_ext
+            filename = req.user["uid"] + '-' + token_urlsafe(10) + file_ext
 
-            s3transfer.upload_fileobj(
+            s3client.upload_fileobj(
                 file_to_upload,
                 bucket,
                 filename,
-                extra_args={'ACL': 'public-read'}
+                ExtraArgs={'ACL': 'public-read'}
             )
-            file_url = '%s/%s/%s' % (s3client.meta.endpoint_url, bucket, filename)
+            file_url = 'https://%s.%s/%s' % ( bucket, s3client.meta.endpoint_url[8:], filename)
             file_to_upload.close()
             return JsonResponse({
                 "status": True,
@@ -85,7 +84,7 @@ def authUser(req):
     Authenticated User's LDAP credentials and provides JWT secret in response
     """
     if req.method == "POST":
-        form = AuthForm(req.jsonbody)
+        form = AuthForm(req.jsonbody(req))
         if form.is_valid():
             try:
                 authorised_acc = auth(form.cleaned_data["username"].strip(), form.cleaned_data["password"])
@@ -99,7 +98,7 @@ def authUser(req):
             msg = {
                 "uid"   :   authorised_acc["uid"],
                 "name"  :   authorised_acc["name"],
-                "exp"   :   str(datetime.now() + timedelta(days=30))
+                "expireon"   :   str(datetime.now() + timedelta(days=30))
             }
             jwt_token = tokenHandler.encode(msg, JWT_SECRET, algorithm="HS256")
 
@@ -118,8 +117,7 @@ def getSelfUser(req):
         return JsonResponse({
                 "status"    : True,
                 "username"  : req.user["uid"],
-                "name"      : req.user["name"],
-                "email"     : req.user["mail"]
+                "name"      : req.user["name"]
             }, status=200)
     return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
     
