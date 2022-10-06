@@ -125,3 +125,18 @@ __all__=[
     "newItem",
     "markUserFound"
 ]
+
+#to get all item from a user 
+def getItemOfUser(req , user_id):
+    """
+    URI looks like: /found/user/<user_id>
+    """
+    if req.method != "GET":
+        return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
+    item = Found.objects.filter(user_id__iexact = user_id) .all().values()
+    if item == None:
+        return JsonResponse({"status": False, "error": "Items doesnt exixst"}, status=404)
+    return JsonResponse({
+        "status": True,
+        "data": item
+    })
