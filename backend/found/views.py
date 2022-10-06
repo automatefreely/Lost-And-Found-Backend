@@ -133,10 +133,10 @@ def getItemOfUser(req , user_id):
     """
     if req.method != "GET":
         return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
-    item = Found.objects.all.filter(user_id = user_id)
+    item = Found.objects.filter(user_id__iexact = user_id) .all().values()
     if item == None:
         return JsonResponse({"status": False, "error": "Items doesnt exixst"}, status=404)
     return JsonResponse({
         "status": True,
-        **item
+        "data": item
     })
