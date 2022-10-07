@@ -119,13 +119,6 @@ def markFound(req):
         "status": True
     })
 
-__all__=[
-    "latestLost",
-    "getItem",
-    "newItem",
-    "markFound"
-]
-
 #to get all item from a user 
 def getItemOfUser(req , user_id):
     """
@@ -133,10 +126,19 @@ def getItemOfUser(req , user_id):
     """
     if req.method != "GET":
         return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
-    item = Lost.objects.filter(user_id__iexact = user_id) .all().values()
-    if item == None:
+    item = list(Lost.objects.filter(user_id__iexact = user_id) .all().values(*selectedCols))
+    if item == None or len(item)==0:
         return JsonResponse({"status": False, "error": "Items doesnt exist"}, status=404)
     return JsonResponse({
         "status": True,
         "data": item
     })
+
+
+__all__=[
+    "latestLost",
+    "getItem",
+    "newItem",
+    "markFound",
+    "getItemOfUser"
+]
