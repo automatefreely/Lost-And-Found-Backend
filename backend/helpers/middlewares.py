@@ -14,10 +14,10 @@ JWT_SECRET = os.environ.get("JWT_SECRET")
 
 class BasicMiddleware:
     """
-    request.user = user || None,
+    request.auth_user = user || None,
     request.authenticated = True || False,
     request.unauthorisedResponse = Unauthorised User error Response (status code = 401)
-    adds a request.user, req.authenticated for making authenticated routes easy
+    adds a request.auth_user, req.authenticated for making authenticated routes easy
     also adds req.unauthorisedResponse for unauthenticated ROutes error Response
     JWT secret is provided in the HTTP Request Headers under the key "secret"
     """
@@ -40,16 +40,16 @@ class BasicMiddleware:
         if (secret and secret!=""):
             message = tokenHandler.decode(secret, JWT_SECRET, algorithms="HS256")
             if (datetime.fromisoformat(message["expireon"]) > datetime.now()) :
-                request.user = {
+                request.auth_user = {
                     "uid": message["uid"],
                     "name": message["name"]
                 }
                 request.authenticated = True
             else:
-                request.user = None
+                request.auth_user = None
                 request.authenticated = False
         else:
-            request.user = None
+            request.auth_user = None
             request.authenticated = False
         response = self.get_response(request)
         return response

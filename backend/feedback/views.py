@@ -22,8 +22,8 @@ def newFeedback(req):
     form = FeedbackForm(req.jsonbody(req))
     if form.is_valid():
         newfeed = Feedback.objects.create(
-            user_id = req.user["uid"],
-            user_name = req.user["name"],
+            user_id = req.auth_user["uid"],
+            user_name = req.auth_user["name"],
             comment = form.cleaned_data["comment"],
             user_experience = form.cleaned_data["user_experience"]
         )

@@ -6,10 +6,12 @@ urlpatterns=[
     path("new/", views.newItem),
     path("userfound/", views.markUserFound),
     path("user/<user_id>/", views.getItemOfUser),
+    path("search/tag/<tag_id>/", views.getItemsByTag),
     path("<id>/", views.getItem),
     path("latest", views.latestFound),
     path("new", views.newItem),
     path("userfound", views.markUserFound),
     path("user/<user_id>", views.getItemOfUser),
+    path("search/tag/<tag_id>", views.getItemsByTag),
     path("<id>", views.getItem)
 ]

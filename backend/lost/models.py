@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from secrets import token_urlsafe
 
@@ -17,3 +18,4 @@ class Lost(models.Model):
     contactPhone=models.CharField("Phone number of owner",max_length=10, default=None, blank=True, null=True)
     image=models.CharField("Image of lost item",max_length=300, default=None, blank=True, null=True)
     found=models.BooleanField("Item found or not", default=False)
+    tag=models.ForeignKey("tag.Tag", on_delete=models.SET_NULL, null=True)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Feedback
+from .models import Tag
 
-admin.site.register(Feedback)
+admin.site.register(Tag)
 # Register your models here.

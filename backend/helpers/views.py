@@ -58,7 +58,7 @@ def imageUpload(req):
             img.save(file_to_upload, format=img.format)
             file_to_upload.seek(0)
 
-            filename = req.user["uid"] + '-' + token_urlsafe(10) + file_ext
+            filename = req.auth_user["uid"] + '-' + token_urlsafe(10) + file_ext
 
             s3client.upload_fileobj(
                 file_to_upload,
@@ -116,8 +116,8 @@ def getSelfUser(req):
     if req.method == "GET":
         return JsonResponse({
                 "status"    : True,
-                "username"  : req.user["uid"],
-                "name"      : req.user["name"]
+                "username"  : req.auth_user["uid"],
+                "name"      : req.auth_user["name"]
             }, status=200)
     return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
     

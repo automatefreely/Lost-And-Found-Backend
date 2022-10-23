@@ -18,3 +18,4 @@ class Found(models.Model):
     contactPhone=models.CharField("Phone number of finder",max_length=10, default=None, blank=True, null=True)
     image=models.CharField("Image of founded item",max_length=300, default=None, blank=True, null=True)
     ownerFound=models.BooleanField("Item owner found or not", default=False)
+    tag=models.ForeignKey("tag.Tag", on_delete=models.SET_NULL, null=True)

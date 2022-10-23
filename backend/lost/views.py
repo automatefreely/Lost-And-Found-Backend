@@ -84,8 +84,8 @@ def newItem(req):
     form = NewItemForm(req.jsonbody(req))
     if form.is_valid():
         newLost = Lost.objects.create(
-            user_id = req.user["uid"],
-            user_name = req.user["name"],
+            user_id = req.auth_user["uid"],
+            user_name = req.auth_user["name"],
             title = form.cleaned_data["title"],
             description = form.cleaned_data["description"],
             location = form.cleaned_data["location"],
@@ -108,7 +108,7 @@ def markFound(req):
     if req.method != "POST":
         return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
 
-    lostitem = Lost.objects.filter(id = req.jsonbody(req).get("id"), user_id = req.user["uid"]).first()
+    lostitem = Lost.objects.filter(id = req.jsonbody(req).get("id"), user_id = req.auth_user["uid"]).first()
     if not lostitem:
         return JsonResponse({"status": False, "error": "Item not found"}, status=404)
 
@@ -134,11 +134,71 @@ def getItemOfUser(req , user_id):
         "data": item
     })
 
+def getItemsByTag(req,tag_id):
+    """
+    URI looks like: /found/tag/<tag_id>
+    """
+    if req.method != "GET":
+        return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
+    page_size = req.GET.get("pagesize") 
+    page_number = req.GET.get("pagenumber")
+    if not page_size:
+        page_size = 20
+    if not page_number:
+        page_number = 1
+    lostitems = Lost.objects.filter(ownerFound=False, tag__id__exact=tag_id).order_by("-created").values(*selectedCols)
+    paginated = Paginator(list(lostitems), page_size)
+    curr_page = paginated.get_page(page_number)
+    
+    res = {
+        "status": True,
+        "class": "lost",
+        "data": curr_page.object_list,
+        "page_size": len(curr_page.object_list),
+        "has_next_page": curr_page.has_next(),
+        "next_page_number": curr_page.next_page_number() if curr_page.number < paginated.num_pages else False,
+        "total_pages": paginated.num_pages,
+        "total_items": paginated.count,
+    }
+    return JsonResponse(res)
+
+from django.db.models import Q
+def searchItem(req):
+    if req.method != "GET":
+        return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
+    page_size = req.GET.get("pagesize") 
+    page_number = req.GET.get("pagenumber")
+    if not page_size:
+        page_size = 20
+    if not page_number:
+        page_number = 1
+    query = req.GET.get("q")
+    if not query:
+        return JsonResponse({"status": False, "error": "Invalid Search Query"}, status=400)
+    results = Lost.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        ).order_by("-created").values(*selectedCols)
+    paginated = Paginator(list(results), page_size)
+    curr_page = paginated.get_page(page_number)
+    
+    res = {
+        "status": True,
+        "class": "lost",
+        "data": curr_page.object_list,
+        "page_size": len(curr_page.object_list),
+        "has_next_page": curr_page.has_next(),
+        "next_page_number": curr_page.next_page_number() if curr_page.number < paginated.num_pages else False,
+        "total_pages": paginated.num_pages,
+        "total_items": paginated.count,
+    }
+    return JsonResponse(res)
+
 
 __all__=[
     "latestLost",
     "getItem",
     "newItem",
     "markFound",
-    "getItemOfUser"
+    "getItemOfUser",
+    "searchItem"
 ]
