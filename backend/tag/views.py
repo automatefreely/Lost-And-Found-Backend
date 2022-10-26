@@ -15,7 +15,7 @@ def newTag(req):
         name=name,
         img=img,
     )
-    return JsonResponse({"status":True,"class":"tag","id":newT.id,"name":newT.name},status=201)
+    return JsonResponse({"status":True,"class":"tag", "data": {"id":newT.id,"name":newT.name}},status=201)
 
 def getAllTags(req):
     if(req.method!="GET"):

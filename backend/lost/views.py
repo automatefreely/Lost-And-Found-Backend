@@ -71,7 +71,7 @@ def getItem(req, id):
     return JsonResponse({
         "status": True,
         "class": "lost",
-        **item
+        "data": item
     })
 
 
@@ -98,7 +98,9 @@ def newItem(req):
         return JsonResponse({
             "status": True,
             "class": "lost",
-            "itemId": newLost.id
+            "data":{
+                "itemId": newLost.id
+            }
         }, status = 201)
     return JsonResponse({"status": False, "error":"Invalid Form Data"}, status=400)
 
