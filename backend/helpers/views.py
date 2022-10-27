@@ -13,9 +13,12 @@ from django.http import JsonResponse
 from django import forms
 
 from .exceptions import InvalidPassword, ServerError, InvalidUser
-from .ldap_auth import auth
 
+# For LDAP auth
+# from .ldap_auth import auth
 
+# For aviral auth
+from .aviral_auth import auth
 
 # JWT constants and variables
 
