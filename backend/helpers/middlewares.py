@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 from django.http import JsonResponse
-from .ldap_auth import getUser
+# from .ldap_auth import getUser
 import jwt
 import json
 from json.decoder import JSONDecodeError
@@ -34,22 +34,27 @@ class BasicMiddleware:
                 return None
         request.jsonbody = bodytojson
         try:
-            secret = request.headers["secret"]
+            secret = request.headers["Authorization"]
         except KeyError:
             secret = None
         if (secret and secret!=""):
-            message = tokenHandler.decode(secret, JWT_SECRET, algorithms="HS256")
-            if (datetime.fromisoformat(message["expireon"]) > datetime.now()) :
-                request.auth_user = {
-                    "uid": message["uid"],
-                    "name": message["name"]
-                }
-                request.authenticated = True
-            else:
+            try:
+                message = tokenHandler.decode(secret, JWT_SECRET, algorithms="HS256")
+                if (datetime.fromisoformat(message["expireon"]) > datetime.now()) :
+                    request.auth_user = {
+                        "uid": message["uid"],
+                        "name": message["name"]
+                    }
+                    request.authenticated = True
+                else:
+                    request.auth_user = None
+                    request.authenticated = False
+            except Exception:
                 request.auth_user = None
-                request.authenticated = False
+                request.authenticated = False     
         else:
             request.auth_user = None
             request.authenticated = False
         response = self.get_response(request)
+        print(response)
         return response

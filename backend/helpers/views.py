@@ -8,6 +8,8 @@ import pathlib
 import jwt
 import json
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+load_dotenv()
 
 from django.http import JsonResponse
 from django import forms
@@ -35,7 +37,7 @@ JWT message structure: {
 tokenHandler = jwt
 JWT_SECRET = os.environ.get("JWT_SECRET")
 
-
+print(JWT_SECRET)
 
 # Amazon S3 constants and variables
 s3client = boto3.client(
