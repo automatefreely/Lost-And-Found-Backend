@@ -36,11 +36,12 @@ def latestFound(req):
 
     page_size = req.GET.get("pagesize") 
     page_number = req.GET.get("pagenumber")
+    order = req.GET.get("order")
     if not page_size:
         page_size = 20
     if not page_number:
         page_number = 1
-    founditems = Found.objects.filter(ownerFound=False).order_by("-created").values(*selectedCols)
+    founditems = Found.objects.filter(ownerFound=False).order_by("created" if order == "ascending" else "-created").values(*selectedCols)
     paginated = Paginator(list(founditems), page_size)
     curr_page = paginated.get_page(page_number)
     
