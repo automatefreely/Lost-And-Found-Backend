@@ -1,27 +1,24 @@
+# For LDAP auth
+# from .ldap_auth import auth
+
+# for Aviral auth
 from .aviral_auth import auth
+
 from .exceptions import InvalidPassword, ServerError, InvalidUser
 from django import forms
 from django.http import JsonResponse
+
+from django.conf import settings
+
 from PIL import Image
-import io
 import os
-import boto3
-from boto3.s3.transfer import S3Transfer
 from secrets import token_urlsafe
 import pathlib
 import jwt
-import json
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv()
 
-
-# For LDAP auth
-# from .ldap_auth import auth
-
-# For aviral auth
-
-# JWT constants and variables
 
 
 class AuthForm(forms.Form):
@@ -39,17 +36,6 @@ JWT message structure: {
 tokenHandler = jwt
 JWT_SECRET = os.environ.get("JWT_SECRET")
 
-print(JWT_SECRET)
-
-# Amazon S3 constants and variables
-s3client = boto3.client(
-    's3',
-    region_name=os.environ.get("AWS_REGION"),
-    aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-    aws_secret_access_key=os.environ.get("AWS_ACCESS_KEY_SECRET"),
-)
-bucket = os.environ.get("S3_BUCKET_NAME")
-
 
 def imageUpload(req):
     if not (req.authenticated):
@@ -62,23 +48,14 @@ def imageUpload(req):
                 img = Image.open(img_file)
                 # Max size of Image allowed -> 1024x1024 pixels
                 img.thumbnail((1024, 1024))
-
-                file_to_upload = io.BytesIO()
-                img.save(file_to_upload, format=img.format)
-                file_to_upload.seek(0)
-
                 filename = req.auth_user["uid"] + \
                     '-' + token_urlsafe(10) + file_ext
 
-                s3client.upload_fileobj(
-                    file_to_upload,
-                    bucket,
-                    filename,
-                    ExtraArgs={'ACL': 'public-read'}
-                )
-                file_url = 'https://%s.%s/%s' % (bucket,
-                                                 s3client.meta.endpoint_url[8:], filename)
-                file_to_upload.close()
+                img.save(os.path.join(
+                    settings.MEDIA_ROOT[0], filename), format=img.format)
+
+                file_url = 'http://%s/img/%s' % (
+                    req.META["HTTP_HOST"], filename)
                 return JsonResponse({
                     "status": True,
                     "url": file_url
