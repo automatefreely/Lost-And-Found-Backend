@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import dj_database_url
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +27,9 @@ SECRET_KEY = 'django-insecure-%1g(j+i1)vwc)0br-pb1cs#rk+!51n7_4b@5-nct3i0eu%r8am
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CORS_ORIGIN_ALLOW_ALL  = True
+CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
-CORS_ALLOW_METHODS = ['DELETE','GET','OPTIONS','PATCH','POST','PUT']
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 
 # Application definition
 INSTALLED_APPS = [
@@ -46,8 +48,8 @@ INSTALLED_APPS = [
     'tag'
 ]
 
-REST_FRAMEWORK={
-    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny' ]
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny']
 }
 
 MIDDLEWARE = [
@@ -84,7 +86,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-import dj_database_url
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -129,6 +130,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+MEDIA_URL = 'img/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "filestore"),  # your media/ files folder
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
