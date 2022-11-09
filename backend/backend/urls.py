@@ -20,6 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('lost/', include("lost.urls")),
     path('found/', include("found.urls")),
+    path('tag/', include("tag.urls")),
     path('feedback/', include("feedback.urls")),
     path("", include("helpers.urls"))
 ]

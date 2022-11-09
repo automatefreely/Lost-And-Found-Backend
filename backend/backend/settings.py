@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,9 +26,9 @@ SECRET_KEY = 'django-insecure-%1g(j+i1)vwc)0br-pb1cs#rk+!51n7_4b@5-nct3i0eu%r8am
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CORS_ORIGIN_ALLOW_ALL  = True
+CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
-CORS_ALLOW_METHODS = ['DELETE','GET','OPTIONS','PATCH','POST','PUT']
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 
 # Application definition
 INSTALLED_APPS = [
@@ -46,8 +47,8 @@ INSTALLED_APPS = [
     'tag'
 ]
 
-REST_FRAMEWORK={
-    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny' ]
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny']
 }
 
 MIDDLEWARE = [
@@ -84,13 +85,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-import dj_database_url
+
+DB_CONN_STRING = "postgresql://lnfadmin:admin@localhost:5432/lostandfound"
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-    # 'default':  dj_database_url.parse("postgres://pivslcca:yHJBmf8DmiNFKVpOottenjbu-KUiPBVV@heffalump.db.elephantsql.com/pivslcca")
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+    'default':  dj_database_url.parse(DB_CONN_STRING)
 }
 
 
