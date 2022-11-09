@@ -39,8 +39,6 @@ JWT message structure: {
 tokenHandler = jwt
 JWT_SECRET = os.environ.get("JWT_SECRET")
 
-print(JWT_SECRET)
-
 # Amazon S3 constants and variables
 s3client = boto3.client(
     's3',
