@@ -85,13 +85,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/4.1/ref/settings/#database
+
+DB_CONN_STRING = "postgresql://lnfadmin:admin@localhost:5432/lostandfound"
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-    # 'default':  dj_database_url.parse("postgres://pivslcca:yHJBmf8DmiNFKVpOottenjbu-KUiPBVV@heffalump.db.elephantsql.com/pivslcca")
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+    'default':  dj_database_url.parse(DB_CONN_STRING)
 }
 
 

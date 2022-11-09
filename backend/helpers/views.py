@@ -36,7 +36,6 @@ JWT message structure: {
 tokenHandler = jwt
 JWT_SECRET = os.environ.get("JWT_SECRET")
 
-
 def imageUpload(req):
     if not (req.authenticated):
         return req.unauthorisedResponse
