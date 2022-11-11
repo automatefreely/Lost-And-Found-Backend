@@ -1,23 +1,36 @@
+from dotenv import load_dotenv
+from datetime import datetime, timedelta
+import jwt
+import pathlib
+from secrets import token_urlsafe
+import os
+from PIL import Image
+from django.conf import settings
+from django.http import JsonResponse
+from django import forms
+from .exceptions import InvalidPassword, ServerError, InvalidUser
+from .aviral_auth import auth
+<< << << < HEAD
 # For LDAP auth
 # from .ldap_auth import auth
 
 # for Aviral auth
-from .aviral_auth import auth
 
-from .exceptions import InvalidPassword, ServerError, InvalidUser
-from django import forms
-from django.http import JsonResponse
 
-from django.conf import settings
-
-from PIL import Image
-import os
-from secrets import token_urlsafe
-import pathlib
-import jwt
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
+== == == =
+>>>>>> > File-In-Database-Storage
 load_dotenv()
+
+<< << << < HEAD
+== == == =
+
+# For LDAP auth
+# from .ldap_auth import auth
+
+# For aviral auth
+
+# JWT constants and variables
+>>>>>> > File-In-Database-Storage
 
 
 class AuthForm(forms.Form):
