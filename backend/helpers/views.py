@@ -10,27 +10,22 @@ from django.http import JsonResponse
 from django import forms
 from .exceptions import InvalidPassword, ServerError, InvalidUser
 from .aviral_auth import auth
-<< << << < HEAD
 # For LDAP auth
 # from .ldap_auth import auth
 
 # for Aviral auth
 
 
-== == == =
->>>>>> > File-In-Database-Storage
+from django.conf import settings
+
+from PIL import Image
+import os
+from secrets import token_urlsafe
+import pathlib
+import jwt
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
 load_dotenv()
-
-<< << << < HEAD
-== == == =
-
-# For LDAP auth
-# from .ldap_auth import auth
-
-# For aviral auth
-
-# JWT constants and variables
->>>>>> > File-In-Database-Storage
 
 
 class AuthForm(forms.Form):
