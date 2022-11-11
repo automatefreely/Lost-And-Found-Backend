@@ -19,6 +19,15 @@ class NewItemForm(forms.Form):
     tagIds = forms.CharField(max_length=300, required=False, strip=True)
 
 
+multiSelectedCols = [
+    "id",
+    "title",
+    "description",
+    "location",
+    "foundDate",
+    "image",
+]
+
 selectedCols = [
     "id",
     "user_id",
@@ -61,7 +70,7 @@ def latestFound(req):
         founditemsquery = founditemsquery.filter(tag__id__in=tag_id)
 
     founditems = founditemsquery.order_by(
-        "created" if order == "ascending" else "-created").values(*selectedCols).annotate(tag=ArrayAgg("tag__id"))
+        "created" if order == "ascending" else "-created").values(*multiSelectedCols)
     paginated = Paginator(list(founditems), page_size)
     curr_page = paginated.get_page(page_number)
 
@@ -87,7 +96,7 @@ def getItem(req, id):
         return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
 
     item = Found.objects.filter(id__exact=id).values(
-        *selectedCols).annotate(tag=ArrayAgg("tag__id")).first()
+        *selectedCols).annotate(tag=ArrayAgg("tag__name")).first()
     if item == None:
         return JsonResponse({"status": False, "error": "Item not found"}, status=404)
     return JsonResponse({

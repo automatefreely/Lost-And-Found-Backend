@@ -21,5 +21,13 @@ def newTag(req):
 def getAllTags(req):
     if (req.method != "GET"):
         return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
-    tags = Tag.objects.all().values("id", "name", "img")
+    tags = Tag.objects.all().values("id", "name", "img", "isCategory")
+    return JsonResponse({"status": True, "class": "tag", "data": list(tags)}, status=200)
+
+
+def getAllCategories(req):
+    if (req.method != "GET"):
+        return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
+    tags = Tag.objects.filter(isCategory=True).values(
+        "id", "name", "img", "isCategory")
     return JsonResponse({"status": True, "class": "tag", "data": list(tags)}, status=200)
