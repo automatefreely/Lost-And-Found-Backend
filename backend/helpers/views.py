@@ -16,14 +16,6 @@ from .aviral_auth import auth
 # for Aviral auth
 
 
-from django.conf import settings
-
-from PIL import Image
-import os
-from secrets import token_urlsafe
-import pathlib
-import jwt
-from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv()
 

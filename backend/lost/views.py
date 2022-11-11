@@ -3,6 +3,11 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django import forms
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.conf import settings
+import pathlib
+from secrets import token_urlsafe
+import os
+from PIL import Image
 
 from .models import Lost
 from tag.models import Tag
@@ -15,7 +20,6 @@ class NewItemForm(forms.Form):
     lostDate = forms.DateTimeField(required=False)
     contactEmail = forms.EmailField(required=False)
     contactPhone = forms.CharField(max_length=10)
-    image = forms.URLField(max_length=300, required=False)
     tagIds = forms.CharField(max_length=300, required=False, strip=True)
 
 
@@ -114,7 +118,24 @@ def newItem(req):
 
     if req.method != "POST":
         return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
-    form = NewItemForm(req.jsonbody(req))
+    img_file = req.FILES.get('image', None)
+    file_url = None
+    if img_file and img_file.size < 10485760:  # 10MB
+        file_ext = pathlib.Path(img_file.name).suffix
+        if (file_ext in ['.jpg', '.png', '.jpeg']):
+            img = Image.open(img_file)
+            # Max size of Image allowed -> 1024x1024 pixels
+            img.thumbnail((1024, 1024))
+            filename = req.auth_user["uid"] + \
+                '-' + token_urlsafe(10) + file_ext
+
+            img.save(os.path.join(
+                settings.MEDIA_ROOT[0], filename), format=img.format)
+
+            file_url = 'http://%s/img/%s' % (
+                req.META["HTTP_HOST"], filename)
+
+    form = NewItemForm(req.POST)
     if form.is_valid():
         newLost = Lost.objects.create(
             user_id=req.auth_user["uid"],
@@ -125,7 +146,7 @@ def newItem(req):
             lostDate=form.cleaned_data["lostDate"],
             contactEmail=form.cleaned_data["contactEmail"],
             contactPhone=form.cleaned_data["contactPhone"],
-            image=form.cleaned_data["image"],
+            image=file_url,
         )
         tagsIdArray = form.cleaned_data["tagIds"].split(";")
         tags = Tag.objects.filter(id__in=tagsIdArray).all() or []
