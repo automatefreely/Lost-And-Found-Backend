@@ -1,9 +1,9 @@
+from .exceptions import InvalidPassword, ServerError, InvalidUser
 import ldap
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from .exceptions import InvalidPassword, ServerError, InvalidUser
 
 LDAP_SERVER = os.environ.get("LDAP_SERVER")
 
@@ -11,7 +11,7 @@ LDAP_SERVER = os.environ.get("LDAP_SERVER")
 ldap_conn = ldap.initialize(LDAP_SERVER)
 ldap_conn.protocol_version = ldap.VERSION3
 
-#Global Variables
+# Global Variables
 searchScope = ldap.SCOPE_SUBTREE
 conn_string = "dc=iiita,dc=ac,dc=in"
 
@@ -23,14 +23,14 @@ def auth(username: str, password: str) -> dict:
     searchFilter = "uid="+username
 
     try:
-        ldap_result_id = ldap_conn.search(conn_string, searchScope, searchFilter)
+        ldap_result_id = ldap_conn.search(
+            conn_string, searchScope, searchFilter)
         result_type, result_data = ldap_conn.result(ldap_result_id, 0)
         if result_type != ldap.RES_SEARCH_ENTRY:
             raise InvalidUser
         cn = result_data[0][0]
     except ldap.LDAPError as e:
         raise ServerError(error=e)
-    
 
     try:
         ldap_conn.simple_bind_s(cn, password)
@@ -38,11 +38,10 @@ def auth(username: str, password: str) -> dict:
         raise InvalidPassword
     except ldap.LDAPError as e:
         raise ServerError(e)
-    
-    details={
+
+    details = {
         "uid": result_data[0][1]['uid'][0].decode('utf-8'),
         "name": result_data[0][1]['gecos'][0].decode('utf-8'),
-        "mail": result_data[0][1]['mail'][0].decode('utf-8'),
     }
 
     return details
@@ -54,17 +53,17 @@ def getUser(username: str) -> dict:
     """
     searchFilter = "uid="+username
     try:
-        ldap_result_id = ldap_conn.search(conn_string, searchScope, searchFilter)
+        ldap_result_id = ldap_conn.search(
+            conn_string, searchScope, searchFilter)
         result_type, result_data = ldap_conn.result(ldap_result_id, 0)
         if result_type != ldap.RES_SEARCH_ENTRY:
             raise InvalidUser
     except ldap.LDAPError as e:
         raise ServerError(error=e)
 
-    details={
+    details = {
         "uid": result_data[0][1]['uid'][0].decode('utf-8'),
         "name": result_data[0][1]['gecos'][0].decode('utf-8'),
-        "mail": result_data[0][1]['mail'][0].decode('utf-8'),
     }
 
     return details

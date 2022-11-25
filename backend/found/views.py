@@ -96,18 +96,31 @@ def getItem(req, id):
     """
     URI looks like: /found/<id>
     """
-    if req.method != "GET":
-        return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
+    if req.method == "GET":
+        item = Found.objects.filter(id__exact=id).values(
+            *selectedCols).annotate(tag=ArrayAgg("tag__name")).first()
+        if item == None:
+            return JsonResponse({"status": False, "error": "Item not found"}, status=404)
+        return JsonResponse({
+            "status": True,
+            "class": "found",
+            "data": item
+        })
 
-    item = Found.objects.filter(id__exact=id).values(
-        *selectedCols).annotate(tag=ArrayAgg("tag__name")).first()
-    if item == None:
-        return JsonResponse({"status": False, "error": "Item not found"}, status=404)
-    return JsonResponse({
-        "status": True,
-        "class": "found",
-        "data": item
-    })
+    if req.method == "DELETE":
+        if not req.authenticated:
+            return req.unauthorisedResponse
+        itemInstance = Found.objects.filter(id__exact=id)
+        item = itemInstance.first()
+        if item == None:
+            return JsonResponse({"status": False, "error": "Item not found"}, status=404)
+        if not item.user_id == req.auth_user["uid"]:
+            return JsonResponse({"status": False, "error": "Unable to delete"}, status=400)
+
+        itemInstance.delete()
+        return JsonResponse({"status": True, "class": "found", "message": "Item Deleted"}, status=200)
+
+    return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
 
 
 def newItem(req):
