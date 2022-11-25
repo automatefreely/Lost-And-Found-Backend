@@ -138,3 +138,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+backend/filestore/*.jpg
+backend/filestore/*.png
