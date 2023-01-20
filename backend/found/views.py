@@ -183,7 +183,7 @@ def markUserFound(req):
     if not foundItem:
         return JsonResponse({"status": False, "error": "Item not found"}, status=404)
 
-    foundItem.found = True
+    foundItem.ownerFound = True
     foundItem.save()
 
     return JsonResponse({

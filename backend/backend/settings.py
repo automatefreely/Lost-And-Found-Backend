@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#database
 
-DB_CONN_STRING = "postgresql://lnfadmin:admin@localhost:5432/lostandfound"
+DB_CONN_STRING = "postgres://ynoyxfsz:d288wSH_1VxGOozzt05p5UlYmmc8025d@tiny.db.elephantsql.com/ynoyxfsz"
 
 DATABASES = {
     # 'default': {

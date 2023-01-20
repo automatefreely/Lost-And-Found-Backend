@@ -13,9 +13,9 @@ from .exceptions import InvalidPassword, ServerError, InvalidUser
 
 
 # for Aviral auth
-# from .aviral_auth import auth
+from .aviral_auth import auth
 # For LDAP auth
-from .ldap_auth import auth, getUser
+# from .ldap_auth import auth, getUser
 
 from found.models import Found
 from lost.models import Lost
@@ -114,48 +114,48 @@ def getSelfUser(req):
     return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
 
 
-def getUserProfile(req, username):
-    if not req.authenticated:
-        return req.unauthorisedResponse
-    if not req.method == "GET":
-        return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
+# def getUserProfile(req, username):
+#     if not req.authenticated:
+#         return req.unauthorisedResponse
+#     if not req.method == "GET":
+#         return JsonResponse({"status": False, "error": "Method not allowed"}, status=405)
 
-    try:
-        user = getUser(username)
-    except InvalidUser:
-        return JsonResponse({"status": False, "error": "User not found"}, status=404)
-    except ServerError:
-        return JsonResponse({"status": False, "error": "LDAP server error"}, status=500)
+#     try:
+#         user = getUser(username)
+#     except InvalidUser:
+#         return JsonResponse({"status": False, "error": "User not found"}, status=404)
+#     except ServerError:
+#         return JsonResponse({"status": False, "error": "LDAP server error"}, status=500)
 
-    userLostItems = list(Lost.objects
-                         .filter(user_id__iexact=user["uid"])
-                         .all()
-                         .order_by("-created")
-                         .values(*[
-                             "id",
-                             "title",
-                             "description",
-                             "location",
-                             "lostDate",
-                             "image",
-                         ]))
+#     userLostItems = list(Lost.objects
+#                          .filter(user_id__iexact=user["uid"])
+#                          .all()
+#                          .order_by("-created")
+#                          .values(*[
+#                              "id",
+#                              "title",
+#                              "description",
+#                              "location",
+#                              "lostDate",
+#                              "image",
+#                          ]))
 
-    userFoundItems = list(Found.objects
-                          .filter(user_id__iexact=user["uid"])
-                          .all()
-                          .values(*[
-                              "id",
-                              "title",
-                              "description",
-                              "location",
-                              "foundDate",
-                              "image",
-                          ]))
+#     userFoundItems = list(Found.objects
+#                           .filter(user_id__iexact=user["uid"])
+#                           .all()
+#                           .values(*[
+#                               "id",
+#                               "title",
+#                               "description",
+#                               "location",
+#                               "foundDate",
+#                               "image",
+#                           ]))
 
-    return JsonResponse({
-        "status": True,
-        "class": "user",
-        "user": user,
-        "lost": userLostItems,
-        "found": userFoundItems
-    }, status=200)
+#     return JsonResponse({
+#         "status": True,
+#         "class": "user",
+#         "user": user,
+#         "lost": userLostItems,
+#         "found": userFoundItems
+#     }, status=200)
