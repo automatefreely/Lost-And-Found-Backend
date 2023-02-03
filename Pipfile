@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 django = "*"
-python-ldap = "*"
+python-ldap = {path = "./python_ldap-3.4.0-cp310-cp310-win_amd64.whl"}
 python-dotenv = "*"
 boto3 = "*"
 pillow = "*"
