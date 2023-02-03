@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import dj_database_url
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -87,7 +89,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#database
 
-DB_CONN_STRING = "postgres://ynoyxfsz:d288wSH_1VxGOozzt05p5UlYmmc8025d@tiny.db.elephantsql.com/ynoyxfsz"
+DB_CONN_STRING = os.environ.get("POSTGRESQL_CONN_STRING")
 
 DATABASES = {
     # 'default': {
