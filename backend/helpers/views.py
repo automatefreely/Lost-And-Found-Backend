@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import jwt
 import pathlib
@@ -11,17 +10,14 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django import forms
 from .exceptions import InvalidPassword, ServerError, InvalidUser
 
-
-# for Aviral auth
-from .aviral_auth import auth
-# For LDAP auth
-# from .ldap_auth import auth, getUser
-
-from found.models import Found
-from lost.models import Lost
-
 from dotenv import load_dotenv
 load_dotenv()
+
+
+if(os.environ.get("AUTH")=="AVIRAL"):
+    from .aviral_auth import auth
+else:
+    from .ldap_auth import auth
 
 
 class AuthForm(forms.Form):
