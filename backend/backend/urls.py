@@ -21,12 +21,12 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('lost/', include("lost.urls")),
-    path('found/', include("found.urls")),
-    path('tag/', include("tag.urls")),
-    path('feedback/', include("feedback.urls")),
-    path("", include("helpers.urls"))
+    path('api/admin/', admin.site.urls),
+    path('api/lost/', include("lost.urls")),
+    path('api/found/', include("found.urls")),
+    path('api/tag/', include("tag.urls")),
+    path('api/feedback/', include("feedback.urls")),
+    path("api/", include("helpers.urls"))
 ]
 
 # Serve these files using Apache/Nginx in production
