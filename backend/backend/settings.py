@@ -30,9 +30,16 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("ENV")=="DEV"
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = os.environ.get("ENV") == "DEV"
 ALLOWED_HOSTS = ['*']
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+if(os.environ.get("ENV", "DEV")=="PROD"):
+    CORS_ORIGIN_WHITELIST = (
+        "http://172.20.72.51",
+        "https://lnf.iiita.ac.in"
+    )
+    ALLOWED_HOSTS = ["http://172.20.72.51",
+                     "https://lnf.iiita.ac.in"]
 
 # Application definition
 INSTALLED_APPS = [
