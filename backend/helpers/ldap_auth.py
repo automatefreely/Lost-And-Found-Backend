@@ -8,8 +8,6 @@ load_dotenv()
 LDAP_SERVER = os.environ.get("LDAP_SERVER")
 
 # LDAP object for user authentication
-ldap_conn = ldap.initialize(LDAP_SERVER)
-ldap_conn.protocol_version = ldap.VERSION3
 
 # Global Variables
 searchScope = ldap.SCOPE_SUBTREE
@@ -17,6 +15,8 @@ conn_string = "dc=iiita,dc=ac,dc=in"
 
 
 def auth(username: str, password: str) -> dict:
+    ldap_conn = ldap.initialize(LDAP_SERVER)
+    ldap_conn.protocol_version = ldap.VERSION3
     """
     Returns User details after successfull authentication of user
     """
@@ -51,6 +51,8 @@ def getUser(username: str) -> dict:
     """
     Returns User details using username
     """
+    ldap_conn = ldap.initialize(LDAP_SERVER)
+    ldap_conn.protocol_version = ldap.VERSION3
     searchFilter = "uid="+username
     try:
         ldap_result_id = ldap_conn.search(
