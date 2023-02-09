@@ -38,7 +38,7 @@ if(os.environ.get("ENV", "DEV")=="PROD"):
         "http://172.20.72.51",
         "https://lnf.iiita.ac.in"
     )
-    ALLOWED_HOSTS = ["http://172.20.72.51",
+    ALLOWED_HOSTS = ["https://172.20.72.51",
                      "https://lnf.iiita.ac.in"]
 
 # Application definition
