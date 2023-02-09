@@ -8,6 +8,7 @@ import pathlib
 from secrets import token_urlsafe
 import os
 from PIL import Image
+from datetime import datetime
 
 from .models import Found
 from tag.models import Tag
@@ -137,7 +138,8 @@ def newItem(req):
             img = Image.open(img_file)
             # Max size of Image allowed -> 1024x1024 pixels
             img.thumbnail((1024, 1024))
-            filename = req.auth_user["uid"] + \
+            now = datetime.now()
+            filename = now.strftime("%Y-%m-%d-") + req.auth_user["uid"] + \
                 '-' + token_urlsafe(10) + file_ext
 
             img.save(os.path.join(
