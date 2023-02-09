@@ -54,7 +54,7 @@ def imageUpload(req):
                 img.save(os.path.join(
                     settings.MEDIA_ROOT[0], filename), format=img.format)
 
-                file_url = 'http://%s/img/%s' % (
+                file_url = 'https://%s/img/%s' % (
                     req.META["HTTP_HOST"], filename)
                 return JsonResponse({
                     "status": True,
