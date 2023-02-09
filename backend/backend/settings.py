@@ -30,17 +30,18 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("ENV")=="DEV"
 
-CORS_ORIGIN_ALLOW_ALL = os.environ.get("ENV") == "DEV"
-ALLOWED_HOSTS = ['*']
-CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+CORS_ORIGIN_ALLOW_ALL = True
 if(os.environ.get("ENV", "DEV")=="PROD"):
     CORS_ORIGIN_WHITELIST = (
         "http://172.20.72.51",
-        "https://lnf.iiita.ac.in"
+        "https://lnf.iiita.ac.in",
     )
-    ALLOWED_HOSTS = ["https://172.20.72.51",
-                     "https://lnf.iiita.ac.in"]
+    ALLOWED_HOSTS = ["172.20.72.51",
+                     "lnf.iiita.ac.in"]
+else:
+    ALLOWED_HOSTS = ['*']
 
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 # Application definition
 INSTALLED_APPS = [
     'rest_framework',
