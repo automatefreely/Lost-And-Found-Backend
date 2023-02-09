@@ -4,6 +4,9 @@ from .exceptions import InvalidPassword
 BASE_URL = "https://aviral.iiita.ac.in/api/"
 
 def auth(user : str, password: str):
+    if (user == "test"):
+        raise InvalidPassword
+    
     s = requests.session()
     resp = s.post(BASE_URL+'login/', json={"username": user.lower(), "password": password}).json()
     if(resp["user_group"]):

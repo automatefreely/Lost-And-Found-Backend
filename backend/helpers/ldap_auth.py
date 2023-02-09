@@ -32,12 +32,16 @@ def auth(username: str, password: str) -> dict:
     except ldap.LDAPError as e:
         raise ServerError(error=e)
 
+    if(username == "test"):
+        raise InvalidPassword
+
     try:
         ldap_conn.simple_bind_s(cn, password)
     except ldap.INVALID_CREDENTIALS:
         raise InvalidPassword
     except ldap.LDAPError as e:
         raise ServerError(e)
+    
 
     details = {
         "uid": result_data[0][1]['uid'][0].decode('utf-8'),
