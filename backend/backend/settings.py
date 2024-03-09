@@ -44,6 +44,7 @@ else:
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 # Application definition
 INSTALLED_APPS = [
+    'django_crontab',
     'rest_framework',
     'corsheaders',
     'django.contrib.admin',
@@ -56,7 +57,8 @@ INSTALLED_APPS = [
     'lost',
     'found',
     'feedback',
-    'tag'
+    'tag',
+    'emailScheduler',
 ]
 
 REST_FRAMEWORK = {
@@ -154,3 +156,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "filestore"),  # your media/ files folder
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CRONJOBS = [
+    ('0 10 * * *', 'emailScheduler.views.sendMail')
+]
